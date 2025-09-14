@@ -2,453 +2,278 @@
 <html>
 <head>
 	<title>DAT OS</title>
-	<style type="text/css">
-	* {
-		margin: 0px;
-		user-select: none;
-		outline: none;
-		padding: 0px;
-		border: 0px;
-		white-space: pre-wrap;
-	}
-	html {
-		width: 100%;
-		height: 100%;
-	}
-	body {
-		width: 100%;
-		height: 100%;
-	}
+	<style>
+	* { margin:0; padding:0; box-sizing:border-box; font-family:monospace; }
+	html,body { width:100%; height:100%; background:black; user-select:none; }
 	#Screen {
 		background: black;
 		width: 1080px;
 		height: 720px;
 		position: absolute;
-		top: 50%;
-		left: 50%;
+		top: 50%; left: 50%;
 		transform: translate(-50%, -50%);
-		font-family: monospace;
+		overflow:hidden;
+	}
+	.window {
+		position:absolute;
+		background:#111;
+		border:2px solid #444;
+		color:white;
+	}
+	.titlebar {
+		background:linear-gradient(orange,yellow,orange);
+		height:32px; line-height:32px;
+		padding:0 10px;
+		font-size:18px;
+		position:relative;
+	}
+	.closebtn {
+		position:absolute; right:4px; top:4px;
+		width:24px; height:24px;
+		text-align:center; line-height:24px;
+		cursor:pointer; border-radius:50%;
+		background:radial-gradient(rgb(40,0,0),red);
+	}
+	.content { padding:10px; overflow:auto; }
+	.icon {
+		width:64px; text-align:center; color:white; cursor:pointer;
+		margin:10px; display:inline-block;
 	}
 	</style>
-	<script type="text/javascript">
-	var StartMenuShown = false;
-	var ChangeLoginOpen = false;
-	window.onload = function() {
-		if (localStorage.getItem("LoginInfoShown") == null) {
-			localStorage.setItem("LoginInfoShown", "false");
-		}
-		if (localStorage.getItem("LoginInfoShown") == "false") {
-			LoginInfo();
-		}
-		else if (localStorage.getItem("LoginInfoShown") == "true") {
-			Login();
-		}
-	}
-	function LoginInfo() {
-		var Screen = document.getElementById("Screen");
-		var LoginWindow = document.createElement("DIV");
-		LoginWindow.style.position = "absolute";
-		LoginWindow.style.top = "50%";
-		LoginWindow.style.left = "50%";
-		LoginWindow.style.transform = "translate(-50%, -50%)";
-		LoginWindow.style.width = "500px";
-		LoginWindow.style.height = "400px";
-		LoginWindow.style.background = "orange";
-		LoginWindow.id = "LoginWindow";
-		Screen.appendChild(LoginWindow);
-		var LoginWindow = document.getElementById("LoginWindow");
-		var LoginWindowTextOne = document.createElement("DIV");
-		LoginWindowTextOne.style.fontSize = "40px";
-		LoginWindowTextOne.innerHTML = "User name: Admin";
-		LoginWindowTextOne.style.textAlign = "center";
-		LoginWindowTextOne.style.marginTop = "25px";
-		LoginWindow.appendChild(LoginWindowTextOne);
-		var LoginWindowTextTwo = document.createElement("DIV");
-		LoginWindowTextTwo.style.fontSize = "40px";
-		LoginWindowTextTwo.innerHTML = "Password: Admin";
-		LoginWindowTextTwo.style.textAlign = "center";
-		LoginWindow.appendChild(LoginWindowTextTwo);
-		var LoginWindowOK = document.createElement("DIV");
-		LoginWindowOK.style.position = "absolute";
-		LoginWindowOK.style.bottom = "25px";
-		LoginWindowOK.style.left = "50%";
-		LoginWindowOK.style.transform = "translateX(-50%)";
-		LoginWindowOK.style.width = "200px";
-		LoginWindowOK.style.textAlign = "center";
-		LoginWindowOK.style.height = "50px";
-		LoginWindowOK.style.fontSize = "34px";
-		LoginWindowOK.innerHTML = "OK";
-		LoginWindowOK.style.background = "red";
-		LoginWindowOK.onclick = Login;
-		LoginWindow.appendChild(LoginWindowOK);
-		localStorage.setItem("LoginInfoShown", "true");
-	}
-	function Login() {
-		if (document.getElementById("LoginWindow") != null) {
-			document.getElementById("LoginWindow").remove();
-		}
-		var Screen = document.getElementById("Screen");
-		var LoginWindow = document.createElement("DIV");
-		LoginWindow.style.position = "absolute";
-		LoginWindow.style.top = "50%";
-		LoginWindow.style.left = "50%";
-		LoginWindow.style.transform = "translate(-50%, -50%)";
-		LoginWindow.style.width = "500px";
-		LoginWindow.style.height = "400px";
-		LoginWindow.style.background = "orange";
-		LoginWindow.id = "LoginWindow";
-		Screen.appendChild(LoginWindow);
-		var LoginWindow = document.getElementById("LoginWindow");
-		var LoginWindowTextOne = document.createElement("DIV");
-		LoginWindowTextOne.style.fontSize = "40px";
-		LoginWindowTextOne.innerHTML = "User name:";
-		LoginWindowTextOne.style.marginTop = "25px";
-		LoginWindowTextOne.style.marginLeft = "25px";
-		LoginWindow.appendChild(LoginWindowTextOne);
-		var LoginWindowTextTwo = document.createElement("DIV");
-		LoginWindowTextTwo.style.fontSize = "40px";
-		LoginWindowTextTwo.innerHTML = "Password:";
-		LoginWindowTextTwo.style.marginLeft = "25px";
-		LoginWindowTextTwo.style.marginTop = "10px";
-		LoginWindow.appendChild(LoginWindowTextTwo);
-		var LoginWindowInputOne = document.createElement("INPUT");
-		LoginWindowInputOne.style.background = "rgb(40, 40, 40)";
-		LoginWindowInputOne.style.color = "white";
-		LoginWindowInputOne.style.position = "absolute";
-		LoginWindowInputOne.style.top = "25px";
-		LoginWindowInputOne.style.left = "275px";
-		LoginWindowInputOne.style.height = "55px";
-		LoginWindowInputOne.style.width = "200px";
-		LoginWindowInputOne.style.fontSize = "40px";
-		LoginWindowInputOne.style.fontFamily = "monospace";
-		LoginWindowInputOne.id = "LoginWindowInputOne";
-		LoginWindow.appendChild(LoginWindowInputOne);
-		var LoginWindowInputTwo = document.createElement("INPUT");
-		LoginWindowInputTwo.style.background = "rgb(40, 40, 40)";
-		LoginWindowInputTwo.style.color = "white";
-		LoginWindowInputTwo.style.position = "absolute";
-		LoginWindowInputTwo.style.top = "90px";
-		LoginWindowInputTwo.style.left = "275px";
-		LoginWindowInputTwo.style.height = "55px";
-		LoginWindowInputTwo.style.width = "200px";
-		LoginWindowInputTwo.style.fontSize = "40px";
-		LoginWindowInputTwo.style.fontFamily = "monospace";
-		LoginWindowInputTwo.id = "LoginWindowInputTwo";
-		LoginWindow.appendChild(LoginWindowInputTwo);
-		var LoginWindowOK = document.createElement("DIV");
-		LoginWindowOK.style.position = "absolute";
-		LoginWindowOK.style.bottom = "25px";
-		LoginWindowOK.style.left = "50%";
-		LoginWindowOK.style.transform = "translateX(-50%)";
-		LoginWindowOK.style.width = "200px";
-		LoginWindowOK.style.textAlign = "center";
-		LoginWindowOK.style.height = "50px";
-		LoginWindowOK.style.fontSize = "34px";
-		LoginWindowOK.innerHTML = "OK";
-		LoginWindowOK.style.background = "red";
-		LoginWindowOK.onclick = SubmitLogin;
-		LoginWindow.appendChild(LoginWindowOK);
-	}
-	function SubmitLogin() {
-		var Screen = document.getElementById("Screen");
-		if (document.getElementById("LoginWindowInputOne").value == "Admin" && document.getElementById("LoginWindowInputTwo").value == "Admin") {
-			document.getElementById("LoginWindow").remove();
-			Desktop();
-		}
-		else if (document.getElementById("LoginWindowInputOne").value != "Admin" || document.getElementById("LoginWindowInputTwo").value != "Admin") {
-			var LoginWindowWarning = document.createElement("DIV");
-			LoginWindowWarning.style.position = "absolute";
-			LoginWindowWarning.style.top = "50%";
-			LoginWindowWarning.style.left = "50%";
-			LoginWindowWarning.style.transform = "translate(-50%, -50%)";
-			LoginWindowWarning.style.width = "500px";
-			LoginWindowWarning.style.height = "400px";
-			LoginWindowWarning.style.background = "Red";
-			LoginWindowWarning.id = "LoginWindowWarning";
-			Screen.appendChild(LoginWindowWarning);
-			var LoginWindowWarning = document.getElementById("LoginWindowWarning");
-			var LoginWindowWarningWarningMark = document.createElement("DIV");
-			LoginWindowWarningWarningMark.style.background = "blue";
-			LoginWindowWarningWarningMark.style.width = "110px";
-			LoginWindowWarningWarningMark.style.height = "110px";
-			LoginWindowWarningWarningMark.style.fontSize = "80px";
-			LoginWindowWarningWarningMark.style.textAlign = "center";
-			LoginWindowWarningWarningMark.style.borderRadius = "55px";
-			LoginWindowWarningWarningMark.style.marginTop = "25px";
-			LoginWindowWarningWarningMark.style.marginLeft = "25px";
-			LoginWindowWarningWarningMark.innerHTML = "!";
-			LoginWindowWarning.appendChild(LoginWindowWarningWarningMark);
-			var LoginWindowWarningTextOne = document.createElement("DIV");
-			LoginWindowWarningTextOne.style.fontSize = "40px";
-			LoginWindowWarningTextOne.innerHTML = "Wrong user name or password.";
-			LoginWindowWarningTextOne.style.textAlign = "center";
-			LoginWindowWarningTextOne.style.position = "absolute";
-			LoginWindowWarningTextOne.style.top = "25px";
-			LoginWindowWarningTextOne.style.left = "135px";
-			LoginWindowWarningTextOne.style.width = "340px";
-			LoginWindowWarning.appendChild(LoginWindowWarningTextOne);
-			var LoginWindowWarningOK = document.createElement("DIV");
-			LoginWindowWarningOK.style.position = "absolute";
-			LoginWindowWarningOK.style.bottom = "25px";
-			LoginWindowWarningOK.style.left = "50%";
-			LoginWindowWarningOK.style.transform = "translateX(-50%)";
-			LoginWindowWarningOK.style.width = "200px";
-			LoginWindowWarningOK.style.textAlign = "center";
-			LoginWindowWarningOK.style.height = "50px";
-			LoginWindowWarningOK.style.fontSize = "34px";
-			LoginWindowWarningOK.innerHTML = "OK";
-			LoginWindowWarningOK.style.background = "Orange";
-			LoginWindowWarningOK.onclick = CloseLoginWindowWarning;
-			LoginWindowWarning.appendChild(LoginWindowWarningOK);
-		}
-	}
-	function CloseLoginWindowWarning() {
-		document.getElementById("LoginWindowWarning").remove();
-	}
-	function Desktop() {
-		var Screen = document.getElementById("Screen");
-		var Desktop = document.createElement("DIV");
-		Desktop.style.width = "1080px";
-		Desktop.style.height = "680px";
-		//Old Background: linear-gradient(45deg, black, darkblue, black)
-		Desktop.style.backgroundImage = "url(Untitled2.jpg)";
-		Desktop.style.backgroundSize = "contain";
-		Desktop.style.backgroundRepeat = "no-repeat";
-		Desktop.style.backgroundPosition = "center";
-		Desktop.id = "Desktop";
-		Screen.appendChild(Desktop);
-		var Desktop = document.getElementById("Desktop");
-		var Taskbar = document.createElement("DIV");
-		Taskbar.style.position = "absolute";
-		Taskbar.style.bottom = "0px";
-		Taskbar.style.background = "linear-gradient(black, rgb(40, 40, 40), black)";
-		Taskbar.style.width = "1080px";
-		Taskbar.style.height = "40px";
-		Taskbar.id = "Taskbar";
-		Desktop.appendChild(Taskbar);
-		var Taskbar = document.getElementById("Taskbar");
-		var StartButton = document.createElement("DIV");
-		StartButton.style.width = "40px";
-		StartButton.style.height = "40px";
-		StartButton.style.background = "radial-gradient(red, darkred, red)";
-		StartButton.style.borderRadius = "20px";
-		StartButton.onclick = ShowOrHideStartMenu;
-		Taskbar.appendChild(StartButton);
-		var DateAndTime = document.createElement("DIV");
-		DateAndTime.style.position = "absolute";
-		DateAndTime.style.textAlign = "center";
-		DateAndTime.style.right = "0px";
-		DateAndTime.style.width = "110px";
-		DateAndTime.style.height = "40px";
-		DateAndTime.style.top = "0px";
-		DateAndTime.style.background = "linear-gradient(red, darkred, red)";
-		DateAndTime.style.fontSize = "14px";
-		DateAndTime.id = "DateAndTime";
-		DateAndTime.innerHTML = "??:??:??\n??.??.????";
-		setInterval(UpdateDateAndTime, 1000);
-		Taskbar.appendChild(DateAndTime);
-		var StartMenu = document.createElement("DIV");
-		StartMenu.style.zIndex = "+9999";
-		StartMenu.style.position = "absolute";
-		StartMenu.style.bottom = "40px";
-		StartMenu.style.background = "linear-gradient(45deg, red, darkred, red)";
-		StartMenu.style.width = "460px";
-		StartMenu.style.height = "680px";
-		StartMenu.style.fontSize = "19px";
-		StartMenu.id = "StartMenu";
-		StartMenu.style.display = "none";
-		Desktop.appendChild(StartMenu);
-		var StartMenu = document.getElementById("StartMenu");
-		var StartMenuAppOne = document.createElement("DIV");
-		StartMenuAppOne.innerHTML = "Change Login";
-		StartMenuAppOne.style.padding = "5px";
-		StartMenuAppOne.onclick = function() {
-			ShowOrHideStartMenu();
-			OpenChangeLogin();
-		};
-		StartMenu.appendChild(StartMenuAppOne);
-	}
-	function ShowOrHideStartMenu() {
-		var StartMenu = document.getElementById("StartMenu");
-		if (StartMenuShown == false) {
-			StartMenu.style.display = "block";
-			StartMenuShown = true;
-			return;
-		}
-		if (StartMenuShown == true) {
-			StartMenu.style.display = "none";
-			StartMenuShown = false;
-			return;
-		}
-	}
-	function UpdateDateAndTime() {
-		var DateElement = new Date();
-		var a, b, c, d, e;
-		if (DateElement.getDate() < 10) {
-			a = "0" + DateElement.getDate();
-		}
-		else
-		{
-			a = DateElement.getDate();
-		}
-		if (DateElement.getMonth() + 1 < 10) {
-			b = "0" + (DateElement.getMonth() + 1);
-		}
-		else {
-			b = DateElement.getMonth() + 1;
-		}
-		if (DateElement.getHours() < 10) {
-			c = "0" + DateElement.getHours();
-		}
-		else {
-			c = DateElement.getHours();
-		}
-		if (DateElement.getMinutes() < 10) {
-			d = "0" + DateElement.getMinutes();
-		}
-		else {
-			d = DateElement.getMinutes();
-		}
-		if (DateElement.getSeconds() < 10) {
-			e = "0" + DateElement.getSeconds();
-		}
-		else {
-			e = DateElement.getSeconds();
-		}
-		document.getElementById("DateAndTime").innerHTML = c + ":" + d + ":" + e + "\n" + a + "." + b + "." + DateElement.getFullYear();
-	}
-	function OpenChangeLogin() {
-		var Desktop = document.getElementById("Desktop");
-		if (ChangeLoginOpen == false) {
-			ChangeLoginOpen = true;
-			var App = document.createElement("DIV");
-			App.style.position = "absolute";
-			App.style.top = "0px";
-			App.style.left = "0px";
-			App.style.background = "black";
-			App.style.width = "1080px";
-			App.style.height = "680px";
-			App.id = "ChangeLogin";
-			Desktop.appendChild(App);
-			var App = document.getElementById("ChangeLogin");
-			var Title = document.createElement("DIV");
-			Title.style.width = "1080px";
-			Title.style.height = "32px";
-			Title.style.background = "linear-gradient(orange, yellow, orange)";
-			Title.style.fontSize = "22px";
-			Title.innerHTML = "Change Login";
-			Title.id = "ChangeLoginTitle";
-			App.appendChild(Title);
-			var Close = document.createElement("DIV");
-			Close.style.position = "absolute";
-			Close.style.right = "0px";
-			Close.style.top = "0px";
-			Close.style.width = "32px";
-			Close.style.height = "32px";
-			Close.style.borderRadius = "16px";
-			Close.innerHTML = "×";
-			Close.style.background = "radial-gradient(rgb(40, 0, 0), red)";
-			Close.style.fontSize = "22px";
-			Close.style.textAlign = "center";
-			Close.onclick = function() {
-				document.getElementById("ChangeLogin").remove();
-				ChangeLoginOpen = false;
-			}
-			var Title = document.getElementById("ChangeLoginTitle");
-			Title.appendChild(Close);
-			var AppContent = document.createElement("DIV");
-			AppContent.style.width = "1080px";
-			AppContent.style.height = "648px";
-			AppContent.style.position = "absolute";
-			AppContent.style.top = "32px";
-			AppContent.style.left = "0px";
-			AppContent.id = "ChangeLoginContent";
-			App.appendChild(AppContent);
-			var AppContent = document.getElementById("ChangeLoginContent");
-			var LoginChanger = document.createElement("DIV");
-			LoginChanger.id = "LoginChanger";
-			LoginChanger.style.width = "1080px";
-			LoginChanger.style.height = "598px";
-			LoginChanger.style.position = "absolute";
-			LoginChanger.style.top = "0px";
-			LoginChanger.style.left = "0px";
-			AppContent.appendChild(LoginChanger);
-			var SubmitLoginChange = document.createElement("DIV");
-			SubmitLoginChange.style.position = "absolute";
-			SubmitLoginChange.style.top = "598px";
-			SubmitLoginChange.style.left = "50%";
-			SubmitLoginChange.style.width = "320px";
-			SubmitLoginChange.style.height = "50px";
-			SubmitLoginChange.style.background = "linear-gradient(red, darkred, red)";
-			SubmitLoginChange.innerHTML = "Save Changes";
-			SubmitLoginChange.style.borderRadius = "25px";
-			SubmitLoginChange.style.textAlign = "center";
-			SubmitLoginChange.style.transform = "translateX(-50%)";
-			SubmitLoginChange.style.fontSize = "34px";
-			AppContent.appendChild(SubmitLoginChange);
-			var LoginChanger = document.getElementById("LoginChanger");
-			var LoginChangerInside = document.createElement("DIV");
-			LoginChangerInside.style.position = "absolute";
-			LoginChangerInside.style.top = "50%";
-			LoginChangerInside.style.left = "50%";
-			LoginChangerInside.style.transform = "translate(-50%, -50%)";
-			LoginChangerInside.id = "LoginChangerInside";
-			LoginChangerInside.style.width = "1016px";
-			LoginChangerInside.style.height = "144px";
-			LoginChanger.appendChild(LoginChangerInside);
-			var LoginChangerTextOne = document.createElement("DIV");
-			LoginChangerTextOne.innerHTML = "User name:";
-			LoginChangerTextOne.style.color = "orange";
-			LoginChangerTextOne.style.fontSize = "44px";
-			LoginChangerTextOne.style.position = "absolute";
-			LoginChangerTextOne.style.top = "0px";
-			LoginChangerTextOne.style.left = "0px";
-			LoginChangerTextOne.style.width = "320px";
-			LoginChangerTextOne.style.height = "61px";
-			var LoginChangerInside = document.getElementById("LoginChangerInside");
-			LoginChangerInside.appendChild(LoginChangerTextOne);
-			var LoginChangerTextTwo = document.createElement("DIV");
-			LoginChangerTextTwo.innerHTML = "Password:";
-			LoginChangerTextTwo.style.color = "orange";
-			LoginChangerTextTwo.style.fontSize = "44px";
-			LoginChangerTextTwo.style.position = "absolute";
-			LoginChangerTextTwo.style.top = "61px";
-			LoginChangerTextTwo.style.left = "0px";
-			LoginChangerTextTwo.style.width = "320px";
-			LoginChangerTextTwo.style.height = "61px";
-			LoginChangerInside.appendChild(LoginChangerTextTwo);
-			var LoginChangerInputOne = document.createElement("INPUT");
-			LoginChangerInputOne.style.background = "rgb(40, 40, 40)";
-			LoginChangerInputOne.style.color = "white";
-			LoginChangerInputOne.style.position = "absolute";
-			LoginChangerInputOne.style.top = "0px";
-			LoginChangerInputOne.style.left = "316px";
-			LoginChangerInputOne.style.height = "61px";
-			LoginChangerInputOne.style.width = "700px";
-			LoginChangerInputOne.style.fontSize = "44px";
-			LoginChangerInputOne.style.fontFamily = "monospace";
-			LoginChangerInputOne.id = "LoginChangerInputOne";
-			LoginChangerInside.appendChild(LoginChangerInputOne);
-			var LoginChangerInputTwo = document.createElement("INPUT");
-			LoginChangerInputTwo.style.background = "rgb(40, 40, 40)";
-			LoginChangerInputTwo.style.color = "white";
-			LoginChangerInputTwo.style.position = "absolute";
-			LoginChangerInputTwo.style.top = "73px";
-			LoginChangerInputTwo.style.left = "316px";
-			LoginChangerInputTwo.style.height = "61px";
-			LoginChangerInputTwo.style.width = "700px";
-			LoginChangerInputTwo.style.fontSize = "44px";
-			LoginChangerInputTwo.style.fontFamily = "monospace";
-			LoginChangerInputTwo.id = "LoginChangerInputTwo";
-			LoginChangerInside.appendChild(LoginChangerInputTwo);
-		}
-		else {
-			return;
-		}
-	}
-	</script>
 </head>
 <body>
-	<div id="Screen"></div>
+<div id="Screen"></div>
+
+<script>
+let StartMenuShown=false, ChangeLoginOpen=false;
+
+window.onload=function(){
+	if(localStorage.getItem("LoginInfoShown")==null){
+		localStorage.setItem("LoginInfoShown","false");
+	}
+	if(localStorage.getItem("LoginInfoShown")=="false"){ LoginInfo(); }
+	else { Login(); }
+	if(!localStorage.getItem("Username")) localStorage.setItem("Username","Admin");
+	if(!localStorage.getItem("Password")) localStorage.setItem("Password","Admin");
+};
+
+function LoginInfo(){
+	let Screen=document.getElementById("Screen");
+	let box=document.createElement("div");
+	box.className="window"; box.style.width="500px"; box.style.height="400px";
+	box.style.top="50%"; box.style.left="50%"; box.style.transform="translate(-50%,-50%)";
+	box.style.background="orange"; box.id="LoginWindow";
+	Screen.appendChild(box);
+	box.innerHTML=`<div style="font-size:40px;text-align:center;margin-top:25px">User name: Admin</div>
+	<div style="font-size:40px;text-align:center;">Password: Admin</div>
+	<div id="okbtn" style="position:absolute;bottom:25px;left:50%;transform:translateX(-50%);
+	width:200px;height:50px;line-height:50px;font-size:34px;text-align:center;background:red;cursor:pointer;">OK</div>`;
+	document.getElementById("okbtn").onclick=Login;
+	localStorage.setItem("LoginInfoShown","true");
+}
+
+function Login(){
+	if(document.getElementById("LoginWindow")) document.getElementById("LoginWindow").remove();
+	let Screen=document.getElementById("Screen");
+	let box=document.createElement("div");
+	box.className="window"; box.style.width="500px"; box.style.height="400px";
+	box.style.top="50%"; box.style.left="50%"; box.style.transform="translate(-50%,-50%)";
+	box.style.background="orange"; box.id="LoginWindow";
+	Screen.appendChild(box);
+	box.innerHTML=`<div style="font-size:40px;margin:25px;">User name:</div>
+	<div style="font-size:40px;margin:10px 25px;">Password:</div>
+	<input id="LoginWindowInputOne" style="position:absolute;top:25px;left:275px;width:200px;height:55px;font-size:40px;background:#222;color:white;">
+	<input id="LoginWindowInputTwo" type="password" style="position:absolute;top:90px;left:275px;width:200px;height:55px;font-size:40px;background:#222;color:white;">
+	<div id="okbtn2" style="position:absolute;bottom:25px;left:50%;transform:translateX(-50%);
+	width:200px;height:50px;line-height:50px;font-size:34px;text-align:center;background:red;cursor:pointer;">OK</div>`;
+	document.getElementById("okbtn2").onclick=SubmitLogin;
+}
+
+function SubmitLogin(){
+	let u=document.getElementById("LoginWindowInputOne").value;
+	let p=document.getElementById("LoginWindowInputTwo").value;
+	let su=localStorage.getItem("Username")||"Admin";
+	let sp=localStorage.getItem("Password")||"Admin";
+	if(u===su && p===sp){
+		document.getElementById("LoginWindow").remove();
+		Desktop();
+	}else{ WrongLogin(); }
+}
+
+function WrongLogin(){
+	let Screen=document.getElementById("Screen");
+	if(document.getElementById("LoginWindowWarning")) return;
+	let box=document.createElement("div");
+	box.className="window"; box.style.width="500px"; box.style.height="200px";
+	box.style.top="50%"; box.style.left="50%"; box.style.transform="translate(-50%,-50%)";
+	box.style.background="red"; box.id="LoginWindowWarning";
+	Screen.appendChild(box);
+	box.innerHTML=`<div style="font-size:30px;text-align:center;margin-top:40px">Wrong user name or password.</div>
+	<div id="warnok" style="position:absolute;bottom:20px;left:50%;transform:translateX(-50%);
+	width:200px;height:50px;line-height:50px;font-size:30px;text-align:center;background:orange;cursor:pointer;">OK</div>`;
+	document.getElementById("warnok").onclick=function(){box.remove()};
+}
+
+function Desktop(){
+	let Screen=document.getElementById("Screen");
+	let desk=document.createElement("div");
+	desk.id="Desktop"; desk.style.width="1080px"; desk.style.height="680px";
+	desk.style.background="url(Untitled2.jpg) center/cover no-repeat";
+	Screen.appendChild(desk);
+
+	// Taskbar
+	let task=document.createElement("div");
+	task.style.position="absolute"; task.style.bottom="0";
+	task.style.width="1080px"; task.style.height="40px";
+	task.style.background="linear-gradient(black,#222,black)";
+	desk.appendChild(task);
+
+	let startbtn=document.createElement("div");
+	startbtn.style.width="40px"; startbtn.style.height="40px";
+	startbtn.style.background="radial-gradient(red,darkred,red)";
+	startbtn.style.borderRadius="20px"; startbtn.style.cursor="pointer";
+	startbtn.onclick=ShowOrHideStartMenu;
+	task.appendChild(startbtn);
+
+	let clock=document.createElement("div");
+	clock.id="DateAndTime";
+	clock.style.position="absolute"; clock.style.right="0";
+	clock.style.width="110px"; clock.style.height="40px"; clock.style.textAlign="center";
+	clock.style.background="linear-gradient(red,darkred,red)";
+	clock.style.fontSize="14px"; clock.style.color="white";
+	task.appendChild(clock);
+	setInterval(UpdateDateAndTime,1000); UpdateDateAndTime();
+
+	// Start Menu
+	let menu=document.createElement("div");
+	menu.id="StartMenu"; menu.style.position="absolute"; menu.style.bottom="40px";
+	menu.style.width="300px"; menu.style.height="400px";
+	menu.style.background="linear-gradient(45deg,red,darkred,red)";
+	menu.style.display="none"; menu.style.color="white"; menu.style.padding="10px";
+	desk.appendChild(menu);
+
+	let opts=[
+		["Change Login",OpenChangeLogin],
+		["Calculator",OpenCalculator],
+		["Notes",OpenNotes],
+		["Clicker Game",OpenGame]
+	];
+	for(let [name,fn] of opts){
+		let d=document.createElement("div"); d.innerText=name;
+		d.style.padding="6px"; d.style.cursor="pointer";
+		d.onclick=function(){ ShowOrHideStartMenu(); fn(); };
+		menu.appendChild(d);
+	}
+}
+
+function ShowOrHideStartMenu(){
+	let m=document.getElementById("StartMenu");
+	if(m.style.display=="none"){ m.style.display="block"; }
+	else m.style.display="none";
+}
+
+function UpdateDateAndTime(){
+	let d=new Date();
+	let h=("0"+d.getHours()).slice(-2);
+	let m=("0"+d.getMinutes()).slice(-2);
+	let s=("0"+d.getSeconds()).slice(-2);
+	let day=("0"+d.getDate()).slice(-2);
+	let mon=("0"+(d.getMonth()+1)).slice(-2);
+	let y=d.getFullYear();
+	document.getElementById("DateAndTime").innerText=`${h}:${m}:${s}\n${day}.${mon}.${y}`;
+}
+
+// --- Change Login
+function OpenChangeLogin(){
+	if(document.getElementById("ChangeLogin")) return;
+	let desk=document.getElementById("Desktop");
+	let win=document.createElement("div"); win.className="window";
+	win.id="ChangeLogin"; win.style.width="500px"; win.style.height="300px";
+	win.style.top="100px"; win.style.left="200px"; win.style.background="#111"; win.style.color="white";
+	desk.appendChild(win);
+	win.innerHTML=`<div class="titlebar">Change Login<div class="closebtn">×</div></div>
+	<div class="content">
+	<p>User name: <input id="newUser" style="width:200px;background:#222;color:white;"></p>
+	<p>Password: <input id="newPass" type="password" style="width:200px;background:#222;color:white;"></p>
+	<button id="saveLogin">Save</button>
+	</div>`;
+	win.querySelector(".closebtn").onclick=()=>win.remove();
+	document.getElementById("saveLogin").onclick=function(){
+		let u=document.getElementById("newUser").value;
+		let p=document.getElementById("newPass").value;
+		if(u&&p){ localStorage.setItem("Username",u); localStorage.setItem("Password",p);
+			alert("Saved! Log out to apply."); win.remove(); }
+		else alert("Both fields required");
+	};
+}
+
+// --- Calculator
+function OpenCalculator(){
+	if(document.getElementById("Calc")) return;
+	let desk=document.getElementById("Desktop");
+	let win=document.createElement("div"); win.className="window";
+	win.id="Calc"; win.style.width="300px"; win.style.height="400px";
+	win.style.top="50px"; win.style.left="50px"; win.style.background="#222";
+	desk.appendChild(win);
+	win.innerHTML=`<div class="titlebar">Calculator<div class="closebtn">×</div></div>
+	<div class="content"><input id="calcdisp" style="width:260px;height:40px;font-size:20px;background:black;color:white;" readonly><br>
+	<div id="buttons"></div></div>`;
+	win.querySelector(".closebtn").onclick=()=>win.remove();
+	let buttons="789/456*123-0.=+";
+	let cont=win.querySelector("#buttons");
+	for(let ch of buttons){
+		let b=document.createElement("button"); b.innerText=ch;
+		b.style.width="60px"; b.style.height="40px"; b.style.margin="5px";
+		b.onclick=function(){
+			let disp=document.getElementById("calcdisp");
+			if(ch=="="){ try{ disp.value=eval(disp.value); }catch{disp.value="Err"} }
+			else disp.value+=ch;
+		};
+		cont.appendChild(b);
+	}
+	let clear=document.createElement("button"); clear.innerText="C";
+	clear.style.width="60px"; clear.style.height="40px"; clear.onclick=()=>document.getElementById("calcdisp").value="";
+	cont.appendChild(clear);
+}
+
+// --- Notes
+function OpenNotes(){
+	if(document.getElementById("Notes")) return;
+	let desk=document.getElementById("Desktop");
+	let win=document.createElement("div"); win.className="window";
+	win.id="Notes"; win.style.width="500px"; win.style.height="400px";
+	win.style.top="150px"; win.style.left="100px"; win.style.background="#222";
+	desk.appendChild(win);
+	win.innerHTML=`<div class="titlebar">Notes<div class="closebtn">×</div></div>
+	<div class="content"><textarea id="notearea" style="width:100%;height:300px;background:black;color:white;"></textarea>
+	<br><button id="savenote">Save</button></div>`;
+	win.querySelector(".closebtn").onclick=()=>win.remove();
+	document.getElementById("notearea").value=localStorage.getItem("Notes")||"";
+	document.getElementById("savenote").onclick=function(){
+		localStorage.setItem("Notes",document.getElementById("notearea").value);
+		alert("Saved!");
+	};
+}
+
+// --- Simple Game
+function OpenGame(){
+	if(document.getElementById("Game")) return;
+	let desk=document.getElementById("Desktop");
+	let win=document.createElement("div"); win.className="window";
+	win.id="Game"; win.style.width="300px"; win.style.height="300px";
+	win.style.top="200px"; win.style.left="200px"; win.style.background="#222";
+	desk.appendChild(win);
+	win.innerHTML=`<div class="titlebar">Clicker<div class="closebtn">×</div></div>
+	<div class="content" style="text-align:center">
+	<p>Score: <span id="score">0</span></p>
+	<button id="clickme" style="width:100px;height:100px;font-size:20px">Click!</button>
+	</div>`;
+	win.querySelector(".closebtn").onclick=()=>win.remove();
+	let score=0;
+	document.getElementById("clickme").onclick=function(){
+		score++; document.getElementById("score").innerText=score;
+	};
+}
+</script>
 </body>
 </html>
