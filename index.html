@@ -1,334 +1,209 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>DAT OS</title>
-  <style>
-    * { margin:0; padding:0; box-sizing:border-box; font-family:monospace; }
-    html,body { width:100%; height:100%; background:black; user-select:none; overflow:hidden; }
-    #Screen {
-      background:black;
-      width:100vw; height:100vh;
-      display:flex; justify-content:center; align-items:center;
-    }
-    #Desktop {
-      position:relative;
-      width:90vw; height:85vh;
-      background:url("Untitled2.jpg") center/cover no-repeat;
-      border:2px solid #333;
-      overflow:hidden;
-    }
-    .window {
-      position:absolute;
-      background:#111;
-      border:2px solid #444;
-      color:white;
-      resize:none;
-      z-index:5;
-    }
-    .titlebar {
-      background:linear-gradient(orange,yellow,orange);
-      height:32px; line-height:32px;
-      padding:0 10px; font-size:18px;
-      cursor:move;
-    }
-    .closebtn {
-      position:absolute; right:4px; top:4px;
-      width:24px; height:24px; text-align:center; line-height:24px;
-      cursor:pointer; border-radius:50%;
-      background:radial-gradient(rgb(40,0,0),red);
-    }
-    .content { padding:10px; overflow:auto; }
-    .icon {
-      width:80px; text-align:center; color:white; cursor:pointer;
-      margin:15px; display:inline-block;
-    }
-    .icon img { width:64px; height:64px; display:block; margin:auto; }
-    #Taskbar {
-      position:absolute; bottom:0; left:0;
-      width:100%; height:40px;
-      background:linear-gradient(black,#222,black);
-      display:flex; align-items:center; justify-content:space-between;
-      padding:0 10px;
-    }
-    #StartBtn {
-      width:40px; height:40px; border-radius:20px;
-      background:radial-gradient(red,darkred,red);
-      cursor:pointer;
-    }
-    #DateAndTime {
-      width:110px; height:40px; text-align:center;
-      background:linear-gradient(red,darkred,red);
-      font-size:14px; color:white; line-height:18px;
-      white-space:pre-line;
-    }
-    #StartMenu {
-      position:absolute; bottom:40px; left:0;
-      width:250px; height:auto; background:linear-gradient(45deg,red,darkred,red);
-      color:white; padding:10px; display:none;
-      z-index:10;
-    }
-    #StartMenu div {
-      padding:6px; cursor:pointer;
-    }
-    #StartMenu div:hover { background:rgba(255,255,255,0.2); }
-  </style>
+<title>DAT OS</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; font-family:monospace; }
+html,body { width:100%; height:100%; background:black; user-select:none; overflow:hidden;}
+#Screen { background:black; width:1080px; height:720px; position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); overflow:hidden; }
+.window { position:absolute; background:#111; border:2px solid #444; color:white; }
+.titlebar { background:linear-gradient(orange,yellow,orange); height:32px; line-height:32px; padding:0 10px; font-size:18px; position:relative; cursor:move;}
+.closebtn { position:absolute; right:4px; top:4px; width:24px; height:24px; text-align:center; line-height:24px; cursor:pointer; border-radius:50%; background:radial-gradient(rgb(40,0,0),red);}
+.content { padding:10px; overflow:auto; }
+.icon { width:64px; text-align:center; color:white; cursor:pointer; margin:10px; display:inline-block;}
+button { cursor:pointer; }
+</style>
 </head>
 <body>
-  <div id="Screen"></div>
-
+<div id="Screen"></div>
 <script>
-const encode = str => btoa(unescape(encodeURIComponent(str)));
-const decode = str => decodeURIComponent(escape(atob(str)));
+let StartMenuShown=false;
 
-window.onload = function(){
-  if(!localStorage.getItem("Username")) localStorage.setItem("Username", encode("Admin"));
-  if(!localStorage.getItem("Password")) localStorage.setItem("Password", encode("Admin"));
-  if(!localStorage.getItem("LoginInfoShown")) localStorage.setItem("LoginInfoShown","false");
-
-  if(localStorage.getItem("LoginInfoShown")==="false") showLoginInfo();
-  else showLogin();
+// --- Startup/Login ---
+window.onload=function(){
+if(localStorage.getItem("LoginInfoShown")=="false" || !localStorage.getItem("LoginInfoShown")){ localStorage.setItem("LoginInfoShown","false"); LoginInfo(); } 
+else { Login(); }
+if(!localStorage.getItem("Username")) localStorage.setItem("Username","Admin");
+if(!localStorage.getItem("Password")) localStorage.setItem("Password","Admin");
 };
 
-function showLoginInfo(){
-  const Screen=document.getElementById("Screen");
-  const box=document.createElement("div");
-  box.className="window";
-  Object.assign(box.style,{width:"400px",height:"300px",background:"orange",top:"50%",left:"50%",transform:"translate(-50%,-50%)"});
-  box.id="LoginWindow";
-  box.innerHTML=`
-    <div style="font-size:28px;text-align:center;margin-top:30px;">Username: Admin</div>
-    <div style="font-size:28px;text-align:center;">Password: Admin</div>
-    <div id="okbtn" style="position:absolute;bottom:25px;left:50%;transform:translateX(-50%);
-      width:150px;height:50px;line-height:50px;font-size:24px;text-align:center;background:red;cursor:pointer;">OK</div>`;
-  Screen.appendChild(box);
-  document.getElementById("okbtn").onclick=()=>{localStorage.setItem("LoginInfoShown","true"); showLogin(); box.remove();};
+function LoginInfo(){
+let Screen=document.getElementById("Screen");
+let box=document.createElement("div");
+box.className="window"; box.style.width="500px"; box.style.height="400px";
+box.style.top="50%"; box.style.left="50%"; box.style.transform="translate(-50%,-50%)";
+box.style.background="orange"; box.id="LoginWindow";
+Screen.appendChild(box);
+box.innerHTML=`<div style="font-size:40px;text-align:center;margin-top:25px">User name: Admin</div>
+<div style="font-size:40px;text-align:center;">Password: Admin</div>
+<div id="okbtn" style="position:absolute;bottom:25px;left:50%;transform:translateX(-50%);
+width:200px;height:50px;line-height:50px;font-size:34px;text-align:center;background:red;cursor:pointer;">OK</div>`;
+document.getElementById("okbtn").onclick=Login;
+localStorage.setItem("LoginInfoShown","true");
 }
 
-function showLogin(){
-  const Screen=document.getElementById("Screen");
-  Screen.innerHTML="";
-  const box=document.createElement("div");
-  box.className="window";
-  Object.assign(box.style,{width:"400px",height:"300px",background:"orange",top:"50%",left:"50%",transform:"translate(-50%,-50%)"});
-  box.id="LoginWindow";
-  box.innerHTML=`
-    <div style="font-size:26px;margin:20px;">Username:</div>
-    <div style="font-size:26px;margin:10px 20px;">Password:</div>
-    <input id="user" style="position:absolute;top:25px;left:200px;width:180px;height:40px;font-size:24px;background:#222;color:white;">
-    <input id="pass" type="password" style="position:absolute;top:90px;left:200px;width:180px;height:40px;font-size:24px;background:#222;color:white;">
-    <div id="okbtn2" style="position:absolute;bottom:25px;left:50%;transform:translateX(-50%);
-      width:150px;height:45px;line-height:45px;font-size:24px;text-align:center;background:red;cursor:pointer;">OK</div>`;
-  Screen.appendChild(box);
-  document.getElementById("okbtn2").onclick=submitLogin;
+function Login(){
+if(document.getElementById("LoginWindow")) document.getElementById("LoginWindow").remove();
+let Screen=document.getElementById("Screen");
+let box=document.createElement("div");
+box.className="window"; box.style.width="500px"; box.style.height="400px";
+box.style.top="50%"; box.style.left="50%"; box.style.transform="translate(-50%,-50%)";
+box.style.background="orange"; box.id="LoginWindow";
+Screen.appendChild(box);
+box.innerHTML=`<div style="font-size:40px;margin:25px;">User name:</div>
+<div style="font-size:40px;margin:10px 25px;">Password:</div>
+<input id="LoginWindowInputOne" style="position:absolute;top:25px;left:275px;width:200px;height:55px;font-size:40px;background:#222;color:white;">
+<input id="LoginWindowInputTwo" type="password" style="position:absolute;top:90px;left:275px;width:200px;height:55px;font-size:40px;background:#222;color:white;">
+<div id="okbtn2" style="position:absolute;bottom:25px;left:50%;transform:translateX(-50%);
+width:200px;height:50px;line-height:50px;font-size:34px;text-align:center;background:red;cursor:pointer;">OK</div>`;
+document.getElementById("okbtn2").onclick=SubmitLogin;
 }
 
-function submitLogin(){
-  const u=document.getElementById("user").value;
-  const p=document.getElementById("pass").value;
-  const su=decode(localStorage.getItem("Username"));
-  const sp=decode(localStorage.getItem("Password"));
-  if(u===su && p===sp){ Desktop(); }
-  else alert("Wrong username or password!");
+function SubmitLogin(){
+let u=document.getElementById("LoginWindowInputOne").value;
+let p=document.getElementById("LoginWindowInputTwo").value;
+let su=localStorage.getItem("Username")||"Admin";
+let sp=localStorage.getItem("Password")||"Admin";
+if(u===su && p===sp){
+document.getElementById("LoginWindow").remove();
+Desktop();
+}else{ WrongLogin(); }
 }
 
-// === DESKTOP ===
+function WrongLogin(){
+let Screen=document.getElementById("Screen");
+if(document.getElementById("LoginWindowWarning")) return;
+let box=document.createElement("div");
+box.className="window"; box.style.width="500px"; box.style.height="200px";
+box.style.top="50%"; box.style.left="50%"; box.style.transform="translate(-50%,-50%)";
+box.style.background="red"; box.id="LoginWindowWarning";
+Screen.appendChild(box);
+box.innerHTML=`<div style="font-size:30px;text-align:center;margin-top:40px">Wrong user name or password.</div>
+<div id="warnok" style="position:absolute;bottom:20px;left:50%;transform:translateX(-50%);
+width:200px;height:50px;line-height:50px;font-size:30px;text-align:center;background:orange;cursor:pointer;">OK</div>`;
+document.getElementById("warnok").onclick=function(){box.remove()};
+}
+
+// --- Desktop ---
 function Desktop(){
-  const Screen=document.getElementById("Screen");
-  Screen.innerHTML="";
-  const desk=document.createElement("div");
-  desk.id="Desktop";
-  Screen.appendChild(desk);
+let Screen=document.getElementById("Screen");
+let desk=document.createElement("div");
+desk.id="Desktop"; desk.style.width="1080px"; desk.style.height="680px";
+desk.style.background="#111";
+Screen.appendChild(desk);
 
-  // Desktop icons
-  const icons=[
-    {name:"Calculator", fn:OpenCalculator},
-    {name:"Notes", fn:OpenNotes},
-    {name:"Clicker", fn:OpenGame},
-    {name:"Change Login", fn:OpenChangeLogin}
-  ];
-  icons.forEach((ic,i)=>{
-    const el=document.createElement("div");
-    el.className="icon";
-    el.style.position="absolute";
-    el.style.left=20+"px";
-    el.style.top=20+i*100+"px";
-    el.innerHTML=`<img src="https://img.icons8.com/fluency/96/ffffff/application-window.png"><span>${ic.name}</span>`;
-    el.onclick=ic.fn;
-    desk.appendChild(el);
-  });
+// Taskbar
+let task=document.createElement("div");
+task.style.position="absolute"; task.style.bottom="0";
+task.style.width="1080px"; task.style.height="40px";
+task.style.background="linear-gradient(black,#222,black)";
+desk.appendChild(task);
 
-  // Taskbar
-  const task=document.createElement("div");
-  task.id="Taskbar"; desk.appendChild(task);
+let startbtn=document.createElement("div");
+startbtn.style.width="40px"; startbtn.style.height="40px";
+startbtn.style.background="radial-gradient(red,darkred,red)";
+startbtn.style.borderRadius="20px"; startbtn.style.cursor="pointer";
+startbtn.onclick=ShowOrHideStartMenu;
+task.appendChild(startbtn);
 
-  const start=document.createElement("div");
-  start.id="StartBtn"; start.onclick=toggleStartMenu;
-  task.appendChild(start);
+let clock=document.createElement("div");
+clock.id="DateAndTime";
+clock.style.position="absolute"; clock.style.right="0";
+clock.style.width="110px"; clock.style.height="40px"; clock.style.textAlign="center";
+clock.style.background="linear-gradient(red,darkred,red)";
+clock.style.fontSize="14px"; clock.style.color="white";
+task.appendChild(clock);
+setInterval(UpdateDateAndTime,1000); UpdateDateAndTime();
 
-  const right=document.createElement("div");
-  right.style.display="flex"; right.style.alignItems="center"; gap="10px";
-  task.appendChild(right);
+// Start Menu
+let menu=document.createElement("div");
+menu.id="StartMenu"; menu.style.position="absolute"; menu.style.bottom="40px";
+menu.style.width="300px"; menu.style.height="500px";
+menu.style.background="linear-gradient(45deg,red,darkred,red)";
+menu.style.display="none"; menu.style.color="white"; menu.style.padding="10px";
+desk.appendChild(menu);
 
-  const logout=document.createElement("button");
-  logout.textContent="Logout";
-  logout.style.background="darkred";
-  logout.style.color="white";
-  logout.style.border="none";
-  logout.style.padding="5px 10px";
-  logout.style.cursor="pointer";
-  logout.onclick=()=>{ showLogin(); };
-  right.appendChild(logout);
+// Desktop icons
+let apps = [
+["Change Login", OpenChangeLogin],
+["Game Center", OpenGameCenter],
+["Text Editor", OpenTextEditor],
+["Terminal", OpenTerminal],
+["File Explorer", OpenFileExplorer],
+["Drawing App", OpenDrawingApp],
+["To-Do List", OpenTodoList],
+["Alarm Clock", OpenAlarmClock],
+["Image Viewer", OpenImageViewer]
+];
+apps.forEach(([name, fn],i)=>{
+let ic=document.createElement("div"); ic.className="icon"; ic.innerText=name;
+ic.onclick=fn;
+ic.style.top=10 + Math.floor(i/5)*100 + "px";
+ic.style.left=10 + (i%5)*150 + "px";
+desk.appendChild(ic);
+});
 
-  const clock=document.createElement("div");
-  clock.id="DateAndTime";
-  right.appendChild(clock);
-  setInterval(updateClock,1000); updateClock();
-
-  // Start Menu
-  const menu=document.createElement("div");
-  menu.id="StartMenu";
-  const items=[
-    ["Change Login",OpenChangeLogin],
-    ["Calculator",OpenCalculator],
-    ["Notes",OpenNotes],
-    ["Clicker Game",OpenGame]
-  ];
-  items.forEach(([n,f])=>{
-    const d=document.createElement("div"); d.textContent=n; d.onclick=()=>{toggleStartMenu();f();};
-    menu.appendChild(d);
-  });
-  desk.appendChild(menu);
+// Start menu options (same apps)
+apps.forEach(([name,fn])=>{
+let d=document.createElement("div"); d.innerText=name;
+d.style.padding="6px"; d.style.cursor="pointer";
+d.onclick=function(){ ShowOrHideStartMenu(); fn(); };
+menu.appendChild(d);
+});
 }
 
-function toggleStartMenu(){
-  const m=document.getElementById("StartMenu");
-  if(!m) return;
-  m.style.display = (m.style.display==="none"||!m.style.display)?"block":"none";
+function ShowOrHideStartMenu(){
+let m=document.getElementById("StartMenu");
+m.style.display = m.style.display=="none"?"block":"none";
 }
 
-function updateClock(){
-  const el=document.getElementById("DateAndTime"); if(!el) return;
-  const d=new Date();
-  const f = n=>("0"+n).slice(-2);
-  el.textContent=`${f(d.getHours())}:${f(d.getMinutes())}:${f(d.getSeconds())}\n${f(d.getDate())}.${f(d.getMonth()+1)}.${d.getFullYear()}`;
+function UpdateDateAndTime(){
+let d=new Date();
+let h=("0"+d.getHours()).slice(-2);
+let m=("0"+d.getMinutes()).slice(-2);
+let s=("0"+d.getSeconds()).slice(-2);
+let day=("0"+d.getDate()).slice(-2);
+let mon=("0"+(d.getMonth()+1)).slice(-2);
+let y=d.getFullYear();
+document.getElementById("DateAndTime").innerText=`${h}:${m}:${s}\n${day}.${mon}.${y}`;
 }
 
-// === DRAGGABLE WINDOWS ===
-function makeDraggable(win){
-  const bar=win.querySelector(".titlebar");
-  let offsetX,offsetY,isDown=false;
-  bar.addEventListener("mousedown",e=>{
-    isDown=true;
-    offsetX=e.clientX - win.offsetLeft;
-    offsetY=e.clientY - win.offsetTop;
-    win.style.zIndex=Date.now();
-  });
-  document.addEventListener("mouseup",()=>isDown=false);
-  document.addEventListener("mousemove",e=>{
-    if(!isDown) return;
-    win.style.left=(e.clientX-offsetX)+"px";
-    win.style.top=(e.clientY-offsetY)+"px";
-  });
-}
-
-// === APPS ===
+// --- Change Login ---
 function OpenChangeLogin(){
-  if(document.getElementById("ChangeLogin")) return;
-  const desk=document.getElementById("Desktop");
-  const win=document.createElement("div");
-  win.className="window"; win.id="ChangeLogin";
-  Object.assign(win.style,{width:"400px",height:"250px",top:"100px",left:"150px",background:"#111"});
-  win.innerHTML=`<div class="titlebar">Change Login<div class="closebtn">×</div></div>
-    <div class="content">
-      <p>Username: <input id="newUser" style="width:200px;background:#222;color:white;"></p>
-      <p>Password: <input id="newPass" type="password" style="width:200px;background:#222;color:white;"></p>
-      <button id="saveLogin">Save</button>
-    </div>`;
-  desk.appendChild(win);
-  makeDraggable(win);
-  win.querySelector(".closebtn").onclick=()=>win.remove();
-  document.getElementById("saveLogin").onclick=function(){
-    const u=document.getElementById("newUser").value;
-    const p=document.getElementById("newPass").value;
-    if(u&&p){
-      localStorage.setItem("Username",encode(u));
-      localStorage.setItem("Password",encode(p));
-      alert("Saved! Log out to apply.");
-      win.remove();
-    } else alert("Both fields required.");
-  };
+if(document.getElementById("ChangeLogin")) return;
+let desk=document.getElementById("Desktop");
+let win=document.createElement("div"); win.className="window";
+win.id="ChangeLogin"; win.style.width="500px"; win.style.height="300px";
+win.style.top="100px"; win.style.left="200px"; win.style.background="#111"; win.style.color="white";
+desk.appendChild(win);
+win.innerHTML=`<div class="titlebar">Change Login<div class="closebtn">×</div></div>
+<div class="content">
+<p>User name: <input id="newUser" style="width:200px;background:#222;color:white;"></p>
+<p>Password: <input id="newPass" type="password" style="width:200px;background:#222;color:white;"></p>
+<button id="saveLogin">Save</button>
+</div>`;
+win.querySelector(".closebtn").onclick=()=>win.remove();
+document.getElementById("saveLogin").onclick=function(){
+let u=document.getElementById("newUser").value;
+let p=document.getElementById("newPass").value;
+if(u&&p){ localStorage.setItem("Username",u); localStorage.setItem("Password",p);
+alert("Saved! Log out to apply."); win.remove(); } else alert("Both fields required");
+};
 }
 
-function OpenCalculator(){
-  if(document.getElementById("Calc")) return;
-  const desk=document.getElementById("Desktop");
-  const win=document.createElement("div");
-  win.className="window"; win.id="Calc";
-  Object.assign(win.style,{width:"280px",height:"360px",top:"80px",left:"80px",background:"#222"});
-  win.innerHTML=`<div class="titlebar">Calculator<div class="closebtn">×</div></div>
-    <div class="content"><input id="calcdisp" style="width:240px;height:40px;font-size:20px;background:black;color:white;" readonly><br>
-    <div id="buttons"></div></div>`;
-  desk.appendChild(win);
-  makeDraggable(win);
-  win.querySelector(".closebtn").onclick=()=>win.remove();
-  const buttons="789/456*123-0.=+";
-  const cont=win.querySelector("#buttons");
-  for(let ch of buttons){
-    const b=document.createElement("button"); b.innerText=ch;
-    Object.assign(b.style,{width:"50px",height:"40px",margin:"5px"});
-    b.onclick=function(){
-      const disp=document.getElementById("calcdisp");
-      if(ch==="="){ try{disp.value=eval(disp.value);}catch{disp.value="Err";} }
-      else disp.value+=ch;
-    };
-    cont.appendChild(b);
-  }
-  const clear=document.createElement("button");
-  clear.innerText="C";
-  Object.assign(clear.style,{width:"50px",height:"40px"});
-  clear.onclick=()=>document.getElementById("calcdisp").value="";
-  cont.appendChild(clear);
-}
+/* -----------------------------
+Now we add placeholder functions for the new apps.
+You can later fill each function with the full app code.
+----------------------------- */
+function OpenGameCenter(){ alert("Game Center opened! (Add your games here)"); }
+function OpenTextEditor(){ alert("Text Editor opened!"); }
+function OpenTerminal(){ alert("Terminal opened!"); }
+function OpenFileExplorer(){ alert("File Explorer opened!"); }
+function OpenDrawingApp(){ alert("Drawing App opened!"); }
+function OpenTodoList(){ alert("To-Do List opened!"); }
+function OpenAlarmClock(){ alert("Alarm Clock opened!"); }
+function OpenImageViewer(){ alert("Image Viewer opened!"); }
 
-function OpenNotes(){
-  if(document.getElementById("Notes")) return;
-  const desk=document.getElementById("Desktop");
-  const win=document.createElement("div");
-  win.className="window"; win.id="Notes";
-  Object.assign(win.style,{width:"400px",height:"300px",top:"120px",left:"120px",background:"#222"});
-  win.innerHTML=`<div class="titlebar">Notes<div class="closebtn">×</div></div>
-    <div class="content"><textarea id="notearea" style="width:100%;height:200px;background:black;color:white;"></textarea>
-    <br><button id="savenote">Save</button></div>`;
-  desk.appendChild(win);
-  makeDraggable(win);
-  win.querySelector(".closebtn").onclick=()=>win.remove();
-  document.getElementById("notearea").value=localStorage.getItem("Notes")||"";
-  document.getElementById("savenote").onclick=function(){
-    localStorage.setItem("Notes",document.getElementById("notearea").value);
-    alert("Saved!");
-  };
-}
-
-function OpenGame(){
-  if(document.getElementById("Game")) return;
-  const desk=document.getElementById("Desktop");
-  const win=document.createElement("div");
-  win.className="window"; win.id="Game";
-  Object.assign(win.style,{width:"250px",height:"250px",top:"160px",left:"160px",background:"#222"});
-  win.innerHTML=`<div class="titlebar">Clicker<div class="closebtn">×</div></div>
-    <div class="content" style="text-align:center">
-      <p>Score: <span id="score">0</span></p>
-      <button id="clickme" style="width:100px;height:100px;font-size:20px">Click!</button>
-    </div>`;
-  desk.appendChild(win);
-  makeDraggable(win);
-  win.querySelector(".closebtn").onclick=()=>win.remove();
-  let score=0;
-  document.getElementById("clickme").onclick=function(){
-    score++; document.getElementById("score").innerText=score;
-  };
-}
 </script>
 </body>
 </html>
