@@ -17,200 +17,113 @@ button { cursor:pointer; }
 <body>
 <div id="Screen"></div>
 <script>
-let StartMenuShown=false;
+// ----------------------
+// Safety & Initialization
+// ----------------------
+window.onerror = function(msg,url,line,col,error){ alert("JS Error: "+msg+"\nLine:"+line+" Col:"+col); return false; };
 
-// --- Startup/Login ---
-window.onload=function(){
-if(localStorage.getItem("LoginInfoShown")=="false" || !localStorage.getItem("LoginInfoShown")){ localStorage.setItem("LoginInfoShown","false"); LoginInfo(); } 
-else { Login(); }
-if(!localStorage.getItem("Username")) localStorage.setItem("Username","Admin");
-if(!localStorage.getItem("Password")) localStorage.setItem("Password","Admin");
-};
+window.onload = function(){
+    if(localStorage.getItem("LoginInfoShown")===null) localStorage.setItem("LoginInfoShown","false");
+    if(!localStorage.getItem("Username")) localStorage.setItem("Username","Admin");
+    if(!localStorage.getItem("Password")) localStorage.setItem("Password","Admin");
 
+    if(localStorage.getItem("LoginInfoShown")=="false") LoginInfo(); else Login();
+}
+
+// ----------------------
+// Login
+// ----------------------
 function LoginInfo(){
-let Screen=document.getElementById("Screen");
-let box=document.createElement("div");
-box.className="window"; box.style.width="500px"; box.style.height="400px";
-box.style.top="50%"; box.style.left="50%"; box.style.transform="translate(-50%,-50%)";
-box.style.background="orange"; box.id="LoginWindow";
-Screen.appendChild(box);
-box.innerHTML=`<div style="font-size:40px;text-align:center;margin-top:25px">User name: Admin</div>
-<div style="font-size:40px;text-align:center;">Password: Admin</div>
-<div id="okbtn" style="position:absolute;bottom:25px;left:50%;transform:translateX(-50%);
-width:200px;height:50px;line-height:50px;font-size:34px;text-align:center;background:red;cursor:pointer;">OK</div>`;
-document.getElementById("okbtn").onclick=Login;
-localStorage.setItem("LoginInfoShown","true");
+    let Screen=document.getElementById("Screen");
+    let box=document.createElement("div");
+    box.className="window"; box.style.width="500px"; box.style.height="400px";
+    box.style.top="50%"; box.style.left="50%"; box.style.transform="translate(-50%,-50%)";
+    box.style.background="orange"; box.id="LoginWindow";
+    Screen.appendChild(box);
+    box.innerHTML=`<div style="font-size:40px;text-align:center;margin-top:25px">User name: Admin</div>
+    <div style="font-size:40px;text-align:center;">Password: Admin</div>
+    <div id="okbtn" style="position:absolute;bottom:25px;left:50%;transform:translateX(-50%);
+    width:200px;height:50px;line-height:50px;font-size:34px;text-align:center;background:red;cursor:pointer;">OK</div>`;
+    document.getElementById("okbtn").onclick=Login;
+    localStorage.setItem("LoginInfoShown","true");
 }
 
 function Login(){
-if(document.getElementById("LoginWindow")) document.getElementById("LoginWindow").remove();
-let Screen=document.getElementById("Screen");
-let box=document.createElement("div");
-box.className="window"; box.style.width="500px"; box.style.height="400px";
-box.style.top="50%"; box.style.left="50%"; box.style.transform="translate(-50%,-50%)";
-box.style.background="orange"; box.id="LoginWindow";
-Screen.appendChild(box);
-box.innerHTML=`<div style="font-size:40px;margin:25px;">User name:</div>
-<div style="font-size:40px;margin:10px 25px;">Password:</div>
-<input id="LoginWindowInputOne" style="position:absolute;top:25px;left:275px;width:200px;height:55px;font-size:40px;background:#222;color:white;">
-<input id="LoginWindowInputTwo" type="password" style="position:absolute;top:90px;left:275px;width:200px;height:55px;font-size:40px;background:#222;color:white;">
-<div id="okbtn2" style="position:absolute;bottom:25px;left:50%;transform:translateX(-50%);
-width:200px;height:50px;line-height:50px;font-size:34px;text-align:center;background:red;cursor:pointer;">OK</div>`;
-document.getElementById("okbtn2").onclick=SubmitLogin;
+    if(document.getElementById("LoginWindow")) document.getElementById("LoginWindow").remove();
+    let Screen=document.getElementById("Screen");
+    let box=document.createElement("div");
+    box.className="window"; box.style.width="500px"; box.style.height="400px";
+    box.style.top="50%"; box.style.left="50%"; box.style.transform="translate(-50%,-50%)";
+    box.style.background="orange"; box.id="LoginWindow";
+    Screen.appendChild(box);
+    box.innerHTML=`<div style="font-size:40px;margin:25px;">User name:</div>
+    <div style="font-size:40px;margin:10px 25px;">Password:</div>
+    <input id="LoginWindowInputOne" style="position:absolute;top:25px;left:275px;width:200px;height:55px;font-size:40px;background:#222;color:white;">
+    <input id="LoginWindowInputTwo" type="password" style="position:absolute;top:90px;left:275px;width:200px;height:55px;font-size:40px;background:#222;color:white;">
+    <div id="okbtn2" style="position:absolute;bottom:25px;left:50%;transform:translateX(-50%);
+    width:200px;height:50px;line-height:50px;font-size:34px;text-align:center;background:red;cursor:pointer;">OK</div>`;
+    document.getElementById("okbtn2").onclick=SubmitLogin;
 }
 
 function SubmitLogin(){
-let u=document.getElementById("LoginWindowInputOne").value;
-let p=document.getElementById("LoginWindowInputTwo").value;
-let su=localStorage.getItem("Username")||"Admin";
-let sp=localStorage.getItem("Password")||"Admin";
-if(u===su && p===sp){
-document.getElementById("LoginWindow").remove();
-Desktop();
-}else{ WrongLogin(); }
+    let u=document.getElementById("LoginWindowInputOne").value;
+    let p=document.getElementById("LoginWindowInputTwo").value;
+    let su=localStorage.getItem("Username")||"Admin";
+    let sp=localStorage.getItem("Password")||"Admin";
+    if(u===su && p===sp){ document.getElementById("LoginWindow").remove(); Desktop(); }
+    else{ WrongLogin(); }
 }
 
 function WrongLogin(){
-let Screen=document.getElementById("Screen");
-if(document.getElementById("LoginWindowWarning")) return;
-let box=document.createElement("div");
-box.className="window"; box.style.width="500px"; box.style.height="200px";
-box.style.top="50%"; box.style.left="50%"; box.style.transform="translate(-50%,-50%)";
-box.style.background="red"; box.id="LoginWindowWarning";
-Screen.appendChild(box);
-box.innerHTML=`<div style="font-size:30px;text-align:center;margin-top:40px">Wrong user name or password.</div>
-<div id="warnok" style="position:absolute;bottom:20px;left:50%;transform:translateX(-50%);
-width:200px;height:50px;line-height:50px;font-size:30px;text-align:center;background:orange;cursor:pointer;">OK</div>`;
-document.getElementById("warnok").onclick=function(){box.remove()};
+    let Screen=document.getElementById("Screen");
+    if(document.getElementById("LoginWindowWarning")) return;
+    let box=document.createElement("div");
+    box.className="window"; box.style.width="500px"; box.style.height="200px";
+    box.style.top="50%"; box.style.left="50%"; box.style.transform="translate(-50%,-50%)";
+    box.style.background="red"; box.id="LoginWindowWarning";
+    Screen.appendChild(box);
+    box.innerHTML=`<div style="font-size:30px;text-align:center;margin-top:40px">Wrong user name or password.</div>
+    <div id="warnok" style="position:absolute;bottom:20px;left:50%;transform:translateX(-50%);
+    width:200px;height:50px;line-height:50px;font-size:30px;text-align:center;background:orange;cursor:pointer;">OK</div>`;
+    document.getElementById("warnok").onclick=function(){box.remove()};
 }
 
-// --- Desktop ---
+// ----------------------
+// Desktop & Apps
+// ----------------------
 function Desktop(){
-let Screen=document.getElementById("Screen");
-let desk=document.createElement("div");
-desk.id="Desktop"; desk.style.width="1080px"; desk.style.height="680px";
-desk.style.background="#111";
-Screen.appendChild(desk);
+    let Screen=document.getElementById("Screen");
+    let desk=document.createElement("div"); desk.id="Desktop"; desk.style.width="1080px"; desk.style.height="680px"; desk.style.background="#111"; Screen.appendChild(desk);
 
-// Taskbar
-let task=document.createElement("div");
-task.style.position="absolute"; task.style.bottom="0";
-task.style.width="1080px"; task.style.height="40px";
-task.style.background="linear-gradient(black,#222,black)";
-desk.appendChild(task);
+    // Taskbar
+    let task=document.createElement("div"); task.style.position="absolute"; task.style.bottom="0"; task.style.width="1080px"; task.style.height="40px"; task.style.background="linear-gradient(black,#222,black)";
+    desk.appendChild(task);
 
-let startbtn=document.createElement("div");
-startbtn.style.width="40px"; startbtn.style.height="40px";
-startbtn.style.background="radial-gradient(red,darkred,red)";
-startbtn.style.borderRadius="20px"; startbtn.style.cursor="pointer";
-startbtn.onclick=ShowOrHideStartMenu;
-task.appendChild(startbtn);
+    let startbtn=document.createElement("div"); startbtn.style.width="40px"; startbtn.style.height="40px";
+    startbtn.style.background="radial-gradient(red,darkred,red)"; startbtn.style.borderRadius="20px"; startbtn.style.cursor="pointer";
+    startbtn.onclick=ShowOrHideStartMenu;
+    task.appendChild(startbtn);
 
-let clock=document.createElement("div");
-clock.id="DateAndTime";
-clock.style.position="absolute"; clock.style.right="0";
-clock.style.width="110px"; clock.style.height="40px"; clock.style.textAlign="center";
-clock.style.background="linear-gradient(red,darkred,red)";
-clock.style.fontSize="14px"; clock.style.color="white";
-task.appendChild(clock);
-setInterval(UpdateDateAndTime,1000); UpdateDateAndTime();
+    let clock=document.createElement("div"); clock.id="DateAndTime"; clock.style.position="absolute"; clock.style.right="0";
+    clock.style.width="110px"; clock.style.height="40px"; clock.style.textAlign="center"; clock.style.background="linear-gradient(red,darkred,red)";
+    clock.style.fontSize="14px"; clock.style.color="white"; task.appendChild(clock);
+    setInterval(UpdateDateAndTime,1000); UpdateDateAndTime();
 
-// Start Menu
-let menu=document.createElement("div");
-menu.id="StartMenu"; menu.style.position="absolute"; menu.style.bottom="40px";
-menu.style.width="300px"; menu.style.height="500px";
-menu.style.background="linear-gradient(45deg,red,darkred,red)";
-menu.style.display="none"; menu.style.color="white"; menu.style.padding="10px";
-desk.appendChild(menu);
+    // Start Menu
+    let menu=document.createElement("div"); menu.id="StartMenu"; menu.style.position="absolute"; menu.style.bottom="40px";
+    menu.style.width="300px"; menu.style.height="500px"; menu.style.background="linear-gradient(45deg,red,darkred,red)";
+    menu.style.display="none"; menu.style.color="white"; menu.style.padding="10px"; desk.appendChild(menu);
 
-// Desktop icons
-let apps = [
-["Change Login", OpenChangeLogin],
-["Game Center", OpenGameCenter],
-["Text Editor", OpenTextEditor],
-["Terminal", OpenTerminal],
-["File Explorer", OpenFileExplorer],
-["Drawing App", OpenDrawingApp],
-["To-Do List", OpenTodoList],
-["Alarm Clock", OpenAlarmClock],
-["Image Viewer", OpenImageViewer]
-];
-apps.forEach(([name, fn],i)=>{
-let ic=document.createElement("div"); ic.className="icon"; ic.innerText=name;
-ic.onclick=fn;
-ic.style.position="absolute";
-ic.style.top=10 + Math.floor(i/5)*100 + "px";
-ic.style.left=10 + (i%5)*150 + "px";
-desk.appendChild(ic);
-});
+    // Apps
+    let apps=[["Change Login",OpenChangeLogin],["Game Center",OpenGameCenter],["Text Editor",OpenTextEditor],["Terminal",OpenTerminal],["File Explorer",OpenFileExplorer],["Drawing App",OpenDrawingApp],["To-Do List",OpenTodoList],["Alarm Clock",OpenAlarmClock],["Image Viewer",OpenImageViewer]];
 
-// Start menu options
-apps.forEach(([name,fn])=>{
-let d=document.createElement("div"); d.innerText=name;
-d.style.padding="6px"; d.style.cursor="pointer";
-d.onclick=function(){ ShowOrHideStartMenu(); fn(); };
-menu.appendChild(d);
-});
+    apps.forEach(([name, fn],i)=>{
+        let ic=document.createElement("div"); ic.className="icon"; ic.innerText=name; ic.onclick=fn;
+        ic.style.position="absolute"; ic.style.top=10 + Math.floor(i/5)*100 + "px"; ic.style.left=10 + (i%5)*150 + "px";
+        desk.appendChild(ic);
+        let d=document.createElement("div"); d.innerText=name; d.style.padding="6px"; d.style.cursor="pointer"; d.onclick=function(){ ShowOrHideStartMenu(); fn(); }; menu.appendChild(d);
+    });
 }
 
-function ShowOrHideStartMenu(){
-let m=document.getElementById("StartMenu");
-m.style.display = m.style.display=="none"?"block":"none";
-}
-
-function UpdateDateAndTime(){
-let d=new Date();
-let h=("0"+d.getHours()).slice(-2);
-let m=("0"+d.getMinutes()).slice(-2);
-let s=("0"+d.getSeconds()).slice(-2);
-let day=("0"+d.getDate()).slice(-2);
-let mon=("0"+(d.getMonth()+1)).slice(-2);
-let y=d.getFullYear();
-document.getElementById("DateAndTime").innerText=`${h}:${m}:${s}\n${day}.${mon}.${y}`;
-}
-
-// --- Change Login ---
-function OpenChangeLogin(){
-if(document.getElementById("ChangeLogin")) return;
-let desk=document.getElementById("Desktop");
-let win=document.createElement("div"); win.className="window";
-win.id="ChangeLogin"; win.style.width="500px"; win.style.height="300px";
-win.style.top="100px"; win.style.left="200px"; win.style.background="#111"; win.style.color="white";
-desk.appendChild(win);
-win.innerHTML=`<div class="titlebar">Change Login<div class="closebtn">×</div></div>
-<div class="content">
-<p>User name: <input id="newUser" style="width:200px;background:#222;color:white;"></p>
-<p>Password: <input id="newPass" type="password" style="width:200px;background:#222;color:white;"></p>
-<button id="saveLogin">Save</button>
-</div>`;
-win.querySelector(".closebtn").onclick=()=>win.remove();
-document.getElementById("saveLogin").onclick=function(){
-let u=document.getElementById("newUser").value;
-let p=document.getElementById("newPass").value;
-if(u&&p){ localStorage.setItem("Username",u); localStorage.setItem("Password",p);
-alert("Saved! Log out to apply."); win.remove(); } else alert("Both fields required");
-};
-}
-
-/* -----------------------------
-Now we add the full apps in original style
------------------------------ */
-
-// For brevity in this snippet, each app can be implemented like your Calculator/Notes example
-function OpenGameCenter(){
-if(document.getElementById("GameCenter")) return;
-let desk=document.getElementById("Desktop");
-let win=document.createElement("div"); win.className="window"; win.id="GameCenter";
-win.style.width="400px"; win.style.height="400px"; win.style.top="50px"; win.style.left="50px"; win.style.background="#222";
-desk.appendChild(win);
-win.innerHTML=`<div class="titlebar">Game Center<div class="closebtn">×</div></div>
-<div class="content" style="text-align:center"><p>Mini Games:</p>
-<button onclick="alert('Snake Game coming soon')">Snake</button>
-<button onclick="alert('Tic-Tac-Toe coming soon')">Tic-Tac-Toe</button></div>`;
-win.querySelector(".closebtn").onclick=()=>win.remove();
-}
-
-function OpenTextEditor(){
-if(document.getElementById("TextEditor")) return;
-let desk=document.getElementById("Desktop");
-let win=document.createElement("div"); win.className="window"; win.id="TextEditor";
+function ShowOrHideStartMenu(){ let m=document.getElementById("StartMenu"); m.style.display = m.style.display=="none"?"block":"none"; }
+function UpdateDateAndTime(){ let d=new Date(); let h=("0"+d.getHours()).slice(-2); let m=("0"+d.getMinutes()).slice(-2); let s=("0"+d.getSeconds()).slice(-2); let day=("0"+d.getDate()).slice(-2); let mon=("0"+(d.getMonth()+1)).slice(-2); let y=d
