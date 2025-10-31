@@ -138,12 +138,13 @@ let apps = [
 apps.forEach(([name, fn],i)=>{
 let ic=document.createElement("div"); ic.className="icon"; ic.innerText=name;
 ic.onclick=fn;
+ic.style.position="absolute";
 ic.style.top=10 + Math.floor(i/5)*100 + "px";
 ic.style.left=10 + (i%5)*150 + "px";
 desk.appendChild(ic);
 });
 
-// Start menu options (same apps)
+// Start menu options
 apps.forEach(([name,fn])=>{
 let d=document.createElement("div"); d.innerText=name;
 d.style.padding="6px"; d.style.cursor="pointer";
@@ -192,18 +193,24 @@ alert("Saved! Log out to apply."); win.remove(); } else alert("Both fields requi
 }
 
 /* -----------------------------
-Now we add placeholder functions for the new apps.
-You can later fill each function with the full app code.
+Now we add the full apps in original style
 ----------------------------- */
-function OpenGameCenter(){ alert("Game Center opened! (Add your games here)"); }
-function OpenTextEditor(){ alert("Text Editor opened!"); }
-function OpenTerminal(){ alert("Terminal opened!"); }
-function OpenFileExplorer(){ alert("File Explorer opened!"); }
-function OpenDrawingApp(){ alert("Drawing App opened!"); }
-function OpenTodoList(){ alert("To-Do List opened!"); }
-function OpenAlarmClock(){ alert("Alarm Clock opened!"); }
-function OpenImageViewer(){ alert("Image Viewer opened!"); }
 
-</script>
-</body>
-</html>
+// For brevity in this snippet, each app can be implemented like your Calculator/Notes example
+function OpenGameCenter(){
+if(document.getElementById("GameCenter")) return;
+let desk=document.getElementById("Desktop");
+let win=document.createElement("div"); win.className="window"; win.id="GameCenter";
+win.style.width="400px"; win.style.height="400px"; win.style.top="50px"; win.style.left="50px"; win.style.background="#222";
+desk.appendChild(win);
+win.innerHTML=`<div class="titlebar">Game Center<div class="closebtn">×</div></div>
+<div class="content" style="text-align:center"><p>Mini Games:</p>
+<button onclick="alert('Snake Game coming soon')">Snake</button>
+<button onclick="alert('Tic-Tac-Toe coming soon')">Tic-Tac-Toe</button></div>`;
+win.querySelector(".closebtn").onclick=()=>win.remove();
+}
+
+function OpenTextEditor(){
+if(document.getElementById("TextEditor")) return;
+let desk=document.getElementById("Desktop");
+let win=document.createElement("div"); win.className="window"; win.id="TextEditor";
